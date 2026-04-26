@@ -29,3 +29,30 @@ body {
   0%   { transform: translate(-50%, -50%) scale(0.5); opacity: 0.8; }
   100% { transform: translate(-50%, -50%) scale(2.2); opacity: 0; }
 }
+
+/* Strip the default chrome from gmp-place-autocomplete so it blends with our wrapper */
+gmp-place-autocomplete.ddma-place-autocomplete {
+  width: 100%;
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+}
+
+gmp-place-autocomplete.ddma-place-autocomplete::part(input) {
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 0;
+  height: 38px;
+  font-size: 16px;
+  font-family: inherit;
+  color: rgba(0, 0, 0, 0.88);
+  box-shadow: none;
+}
+
+gmp-place-autocomplete.ddma-place-autocomplete[disabled]::part(input) {
+  color: rgba(0, 0, 0, 0.25);
+  cursor: not-allowed;
+}

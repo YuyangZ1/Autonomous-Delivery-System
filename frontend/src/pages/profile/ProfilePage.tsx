@@ -74,7 +74,7 @@ export function ProfilePage() {
 
   if (loading) {
     return (
-      <Card title="用户资料">
+      <Card title="Profile">
         <Spin tip="Loading..." />
       </Card>
     );
@@ -82,18 +82,18 @@ export function ProfilePage() {
 
   if (loadError) {
     return (
-      <Card title="用户资料">
+      <Card title="Profile">
         <Alert type="error" message={loadError} />
       </Card>
     );
   }
 
   return (
-    <Card title="用户资料" style={{ maxWidth: 500 }}>
+    <Card title="Profile" style={{ maxWidth: 500 }}>
       {saveSuccess && (
         <Alert
           type="success"
-          message="个人信息已更新"
+          message="Profile information updated"
           style={{ marginBottom: 16 }}
           showIcon
         />
@@ -116,21 +116,21 @@ export function ProfilePage() {
         }}
         onFinish={handleSave}
       >
-        <Form.Item label="姓名" name="fullName">
-          <Input placeholder="张三" />
+        <Form.Item label="Name" name="fullName">
+          <Input placeholder="John Doe" />
         </Form.Item>
 
-        <Form.Item label="手机" name="phone">
+        <Form.Item label="Phone" name="phone">
           <Input placeholder="+1..." />
         </Form.Item>
 
         {/* Email is read-only — backend never allows email changes */}
-        <Form.Item label="邮箱" name="email">
+        <Form.Item label="Email" name="email">
           <Input placeholder="user@example.com" readOnly style={{ color: "#888" }} />
         </Form.Item>
 
         <Button type="primary" htmlType="submit" loading={saving}>
-          保存
+          Save
         </Button>
       </Form>
     </Card>

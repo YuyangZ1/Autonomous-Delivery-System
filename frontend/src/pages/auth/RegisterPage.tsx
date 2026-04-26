@@ -33,7 +33,7 @@ export function RegisterPage() {
       });
 
       if (!res?.challenge_id) {
-        throw new Error("sendOtp 接口没有返回 challenge_id。请检查后端是否已重启。");
+        throw new Error("sendOtp API did not return challenge_id. Please check if the backend has restarted.");
       }
 
       setChallengeId(String(res.challenge_id));
@@ -42,10 +42,10 @@ export function RegisterPage() {
 
       notification.open({
         type: "warning",
-        message: "开发模式 — OTP 验证码",
+        message: "Development Mode — OTP Code",
         description: (
           <span>
-            您的验证码为：
+            Your OTP code is:
             <strong
               style={{
                 fontSize: 22,
@@ -58,7 +58,7 @@ export function RegisterPage() {
             </strong>
             <br />
             <span style={{ color: "#888", fontSize: 12 }}>
-              （此弹窗仅在开发阶段出现，生产环境将发送至邮箱/手机）
+              (This notification only appears during development. In production, it will be sent to your email or phone.)
             </span>
           </span>
         ),
@@ -66,19 +66,19 @@ export function RegisterPage() {
         duration: 30,
       });
 
-      message.success("验证码已生成，请查看页面顶部弹窗。");
+      message.success("OTP code has been generated. Check the notification at the top of the page.");
     } catch (error) {
       if (error instanceof Error) {
         const apiError = error as Error & { code?: string };
         if (apiError.code === "EMAIL_TAKEN") {
-          message.error("该邮箱已被注册，请直接登录或更换邮箱。");
+          message.error("This email is already registered. Please log in or use a different email.");
         } else if (apiError.code === "PHONE_TAKEN") {
-          message.error("该手机号已被注册，请直接登录或更换手机号。");
+          message.error("This phone number is already registered. Please log in or use a different phone.");
         } else {
-          message.error(error.message || "发送验证码失败");
+          message.error(error.message || "Failed to send OTP code");
         }
       } else {
-        message.error("发送验证码失败");
+        message.error("Failed to send OTP code");
       }
     } finally {
       setLoading(false);
@@ -87,7 +87,7 @@ export function RegisterPage() {
 
   const handleCompleteRegister = async (values: StepTwoValues) => {
     if (!stepOneData || !challengeId) {
-      message.error("缺少注册信息，请重新发送验证码。");
+      message.error("Missing registration information. Please send the OTP code again.");
       setStep(0);
       return;
     }
@@ -95,10 +95,10 @@ export function RegisterPage() {
     try {
       setLoading(true);
       await register({ challenge_id: challengeId, otp_code: values.otp });
-      message.success("注册成功，请登录。");
+      message.success("Sign up successful. Please log in.");
       navigate("/login");
     } catch (error) {
-      message.error(error instanceof Error ? error.message : "注册失败");
+      message.error(error instanceof Error ? error.message : "Sign up failed");
     } finally {
       setLoading(false);
     }
@@ -146,42 +146,42 @@ export function RegisterPage() {
             level={3}
             style={{ margin: 0, color: "#1A1D2E", letterSpacing: -0.5 }}
           >
-            创建账户
+            Create Account
           </Typography.Title>
           <Typography.Text type="secondary" style={{ fontSize: 14 }}>
-            只需两步，即可开始使用自治配送
+            Two simple steps to get started with Autonomous Delivery
           </Typography.Text>
         </div>
 
         <Steps
           size="small"
           current={step}
-          items={[{ title: "基本信息" }, { title: "OTP 验证" }]}
+          items={[{ title: "Basic Information" }, { title: "OTP Verification" }]}
           style={{ marginBottom: 28 }}
         />
 
         {step === 0 ? (
           <Form layout="vertical" onFinish={handleSendOtp}>
             <Form.Item
-              label="姓名"
+              label="Name"
               name="name"
-              rules={[{ required: true, message: "请输入姓名" }]}
+              rules={[{ required: true, message: "Please enter your name" }]}
             >
-              <Input size="large" placeholder="请输入您的姓名" />
+              <Input size="large" placeholder="Enter your name" />
             </Form.Item>
             <Form.Item
-              label="邮箱或手机"
+              label="Email or Phone"
               name="identifier"
-              rules={[{ required: true, message: "请输入邮箱或手机" }]}
+              rules={[{ required: true, message: "Please enter email or phone" }]}
             >
-              <Input size="large" placeholder="user@example.com 或 +14155550101" />
+              <Input size="large" placeholder="user@example.com or +14155550101" />
             </Form.Item>
             <Form.Item
-              label="密码"
+              label="Password"
               name="password"
-              rules={[{ required: true, message: "请输入密码" }]}
+              rules={[{ required: true, message: "Please enter a password" }]}
             >
-              <Input.Password size="large" placeholder="请设置密码" />
+              <Input.Password size="large" placeholder="Set a password" />
             </Form.Item>
             <Form.Item style={{ marginTop: 8 }}>
               <Button
@@ -191,16 +191,16 @@ export function RegisterPage() {
                 size="large"
                 loading={loading}
               >
-                发送验证码
+                Send OTP Code
               </Button>
             </Form.Item>
           </Form>
         ) : (
           <Form layout="vertical" onFinish={handleCompleteRegister}>
             <Form.Item
-              label="验证码"
+              label="OTP Code"
               name="otp"
-              rules={[{ required: true, message: "请输入验证码" }]}
+              rules={[{ required: true, message: "Please enter OTP code" }]}
               style={{ marginBottom: 24 }}
             >
               <Input.OTP length={6} />
@@ -213,19 +213,19 @@ export function RegisterPage() {
               loading={loading}
               style={{ marginBottom: 8 }}
             >
-              完成注册
+              Complete Sign Up
             </Button>
             <Button type="text" onClick={() => setStep(0)} block>
-              ← 返回上一步
+              ← Back to Previous Step
             </Button>
           </Form>
         )}
 
         <div style={{ textAlign: "center", marginTop: 16 }}>
           <Typography.Text type="secondary" style={{ fontSize: 13 }}>
-            已有账户？{" "}
+            Already have an account?{" "}
             <Link to="/login" style={{ color: "#4F6EF7", fontWeight: 500 }}>
-              去登录
+              Log In
             </Link>
           </Typography.Text>
         </div>

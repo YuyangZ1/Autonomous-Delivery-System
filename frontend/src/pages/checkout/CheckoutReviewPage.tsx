@@ -42,44 +42,44 @@ export function CheckoutReviewPage() {
 
   if (!draft || !plan || !orderId) {
     return (
-      <Card title="订单摘要">
+      <Card title="Order Summary">
         <Alert
           type="warning"
           showIcon
-          message="订单信息不完整，请重新下单。"
+          message="Order information is incomplete. Please create a new order."
           style={{ marginBottom: 16 }}
         />
-        <Button onClick={() => navigate('/order')}>返回下单</Button>
+        <Button onClick={() => navigate('/order')}>Back to Create Order</Button>
       </Card>
     );
   }
 
-  const vehicleLabel = plan.vehicleType === 'DRONE' ? '无人机' : '地面机器人';
+  const vehicleLabel = plan.vehicleType === 'DRONE' ? 'Drone' : 'Ground Robot';
 
   return (
-    <Card title="订单摘要">
+    <Card title="Order Summary">
       <Descriptions bordered column={1} size="small" style={{ marginBottom: 24 }}>
-        <Descriptions.Item label="取货地址">{draft.pickupAddress}</Descriptions.Item>
-        <Descriptions.Item label="送货地址">{draft.dropoffAddress}</Descriptions.Item>
-        <Descriptions.Item label="包裹规格">
+        <Descriptions.Item label="Pickup Address">{draft.pickupAddress}</Descriptions.Item>
+        <Descriptions.Item label="Dropoff Address">{draft.dropoffAddress}</Descriptions.Item>
+        <Descriptions.Item label="Package Specs">
           {draft.parcel.sizeTier} · {draft.parcel.weightKg} kg
-          {draft.parcel.fragile ? ' · 易碎' : ''}
+          {draft.parcel.fragile ? ' · Fragile' : ''}
         </Descriptions.Item>
-        <Descriptions.Item label="配送方式">{vehicleLabel}</Descriptions.Item>
-        <Descriptions.Item label="预计时间">约 {plan.etaMinutes} 分钟</Descriptions.Item>
-        <Descriptions.Item label="配送费">
+        <Descriptions.Item label="Delivery Method">{vehicleLabel}</Descriptions.Item>
+        <Descriptions.Item label="Estimated Time">~{plan.etaMinutes} minutes</Descriptions.Item>
+        <Descriptions.Item label="Delivery Fee">
           <Typography.Text strong style={{ fontSize: 18, color: '#4F6EF7' }}>
             ${plan.priceUsd.toFixed(2)}
           </Typography.Text>
         </Descriptions.Item>
       </Descriptions>
       <Space wrap>
-        <Button onClick={() => navigate('/order')}>返回编辑</Button>
+        <Button onClick={() => navigate('/order')}>Back to Edit</Button>
         <Button
           type="primary"
           onClick={() => navigate(`/checkout/pay?orderId=${encodeURIComponent(orderId)}`)}
         >
-          去支付 ${plan.priceUsd.toFixed(2)}
+          Pay ${plan.priceUsd.toFixed(2)}
         </Button>
       </Space>
     </Card>

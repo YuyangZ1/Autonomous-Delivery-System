@@ -34,14 +34,14 @@ export function PaymentPage() {
 
   if (!plan || !orderId) {
     return (
-      <Card title="支付">
+      <Card title="Payment">
         <Alert
           type="warning"
           showIcon
-          message="订单信息不完整，请重新下单。"
+          message="Order information is incomplete. Please create a new order."
           style={{ marginBottom: 16 }}
         />
-        <Button onClick={() => navigate('/order')}>返回下单</Button>
+        <Button onClick={() => navigate('/order')}>Back to Create Order</Button>
       </Card>
     );
   }
@@ -65,31 +65,31 @@ export function PaymentPage() {
         },
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : '支付失败，请重试。');
+      setError(err instanceof Error ? err.message : 'Payment failed. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Card title="确认支付">
+    <Card title="Confirm Payment">
       <Typography.Paragraph>
-        配送方式：{plan.vehicleType === 'DRONE' ? '无人机' : '地面机器人'}
+        Delivery Method: {plan.vehicleType === 'DRONE' ? 'Drone' : 'Ground Robot'}
       </Typography.Paragraph>
       <Typography.Paragraph>
-        预计时间：约 {plan.etaMinutes} 分钟
+        Estimated Time: ~{plan.etaMinutes} minutes
       </Typography.Paragraph>
       <Typography.Title level={3} style={{ color: '#4F6EF7', marginBottom: 24 }}>
-        应付：${plan.priceUsd.toFixed(2)}
+        Total: ${plan.priceUsd.toFixed(2)}
       </Typography.Title>
       {error && (
         <Alert type="error" showIcon message={error} style={{ marginBottom: 16 }} />
       )}
       {loading ? (
-        <Spin tip="处理中..." />
+        <Spin tip="Processing..." />
       ) : (
         <Button type="primary" size="large" onClick={() => void handlePay()}>
-          立即支付 ${plan.priceUsd.toFixed(2)}
+          Pay ${plan.priceUsd.toFixed(2)}
         </Button>
       )}
     </Card>

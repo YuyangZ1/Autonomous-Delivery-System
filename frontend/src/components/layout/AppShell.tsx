@@ -15,10 +15,10 @@ import { useAuth } from '@/context/AuthContext';
 const { Header, Content } = Layout;
 
 const navItems = [
-  { key: '/', icon: <HomeOutlined />, label: '首页' },
-  { key: '/order', icon: <ShoppingOutlined />, label: '创建订单' },
-  { key: '/recommendations', icon: <EnvironmentOutlined />, label: '交付选项' },
-  { key: '/history', icon: <HistoryOutlined />, label: '订单历史' },
+  { key: '/', icon: <HomeOutlined />, label: 'Home' },
+  { key: '/order', icon: <ShoppingOutlined />, label: 'Create Order' },
+  { key: '/recommendations', icon: <EnvironmentOutlined />, label: 'Delivery Options' },
+  { key: '/history', icon: <HistoryOutlined />, label: 'Order History' },
 ];
 
 export function AppShell() {
@@ -44,14 +44,14 @@ export function AppShell() {
     {
       key: 'profile',
       icon: <UserOutlined />,
-      label: '个人资料',
+      label: 'Profile',
       onClick: () => navigate('/profile'),
     },
     { type: 'divider' as const },
     {
       key: 'logout',
       icon: <LogoutOutlined />,
-      label: '退出登录',
+      label: 'Log Out',
       danger: true,
       onClick: handleLogout,
     },
@@ -99,7 +99,7 @@ export function AppShell() {
             <CarOutlined style={{ fontSize: 18, color: '#4F6EF7' }} />
           </div>
           <Typography.Text strong style={{ fontSize: 15, color: '#1A1D2E', letterSpacing: -0.3 }}>
-            自治配送
+            Autonomous Delivery
           </Typography.Text>
         </div>
 

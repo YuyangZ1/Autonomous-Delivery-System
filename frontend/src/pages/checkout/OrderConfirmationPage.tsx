@@ -23,15 +23,15 @@ export function OrderConfirmationPage() {
     <Card>
       <Result
         status="success"
-        title="订单已确认"
+        title="Order Confirmed"
         subTitle={
           <>
-            <Typography.Paragraph>订单编号：{orderId}</Typography.Paragraph>
+            <Typography.Paragraph>Order ID: {orderId}</Typography.Paragraph>
             {totalAmount !== undefined && (
-              <Typography.Paragraph>已支付：${totalAmount.toFixed(2)}</Typography.Paragraph>
+              <Typography.Paragraph>Paid: ${totalAmount.toFixed(2)}</Typography.Paragraph>
             )}
             <Typography.Paragraph type="secondary">
-              预计送达：约 {etaMinutes} 分钟
+              Estimated Arrival: ~{etaMinutes} minutes
             </Typography.Paragraph>
             <div
               style={{
@@ -47,7 +47,7 @@ export function OrderConfirmationPage() {
                 type="secondary"
                 style={{ display: 'block', fontSize: 12, marginBottom: 4 }}
               >
-                取件 PIN 码
+                Pickup PIN
               </Typography.Text>
               <Typography.Title
                 level={1}
@@ -64,7 +64,7 @@ export function OrderConfirmationPage() {
             size="large"
             onClick={() => navigate(`/orders/${orderId}/tracking`)}
           >
-            追踪配送
+            Track Delivery
           </Button>
         }
       />

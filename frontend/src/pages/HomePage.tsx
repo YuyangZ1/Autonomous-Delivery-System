@@ -12,18 +12,18 @@ const { Title, Text, Paragraph } = Typography;
 const features = [
   {
     icon: <RocketOutlined style={{ fontSize: 24, color: '#4F6EF7' }} />,
-    title: '极速配送',
-    desc: '自动驾驶机器人 & 无人机，最快 28 分钟送达',
+    title: 'Lightning-Fast Delivery',
+    desc: 'Autonomous robots & drones deliver in as little as 28 minutes',
   },
   {
     icon: <EnvironmentOutlined style={{ fontSize: 24, color: '#10B981' }} />,
-    title: '全程可视',
-    desc: '实时追踪配送位置，订单状态一目了然',
+    title: 'Full Visibility',
+    desc: 'Real-time tracking of your delivery location and order status',
   },
   {
     icon: <SafetyCertificateOutlined style={{ fontSize: 24, color: '#F59E0B' }} />,
-    title: '安全保障',
-    desc: '全程加密传输，包裹安全有保障',
+    title: 'Secure & Safe',
+    desc: 'End-to-end encrypted delivery with complete package safety',
   },
 ];
 
@@ -78,7 +78,7 @@ export function HomePage() {
             letterSpacing: -1,
           }}
         >
-          智能自治配送
+          Intelligent Autonomous Delivery
         </Title>
         <Paragraph
           style={{
@@ -88,7 +88,7 @@ export function HomePage() {
             maxWidth: 480,
           }}
         >
-          通过自动驾驶机器人与无人机，实现城市内快速、安全、低碳的包裹配送。
+          Fast, safe, and carbon-neutral package delivery powered by autonomous robots and drones.
         </Paragraph>
         <Button
           type="default"
@@ -107,7 +107,7 @@ export function HomePage() {
             boxShadow: '0 2px 12px rgba(0,0,0,0.15)',
           }}
         >
-          立即下单
+          Create Order
         </Button>
       </div>
 
@@ -156,10 +156,10 @@ export function HomePage() {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div>
                 <Title level={5} style={{ margin: '0 0 4px', color: '#1A1D2E' }}>
-                  订单历史
+                  Order History
                 </Title>
                 <Text type="secondary" style={{ fontSize: 13 }}>
-                  查看所有历史配送记录
+                  View all delivery history
                 </Text>
               </div>
               <ArrowRightOutlined style={{ color: '#6B7280', fontSize: 16 }} />
@@ -176,10 +176,10 @@ export function HomePage() {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div>
                 <Title level={5} style={{ margin: '0 0 4px', color: '#1A1D2E' }}>
-                  个人资料
+                  Profile
                 </Title>
                 <Text type="secondary" style={{ fontSize: 13 }}>
-                  管理账户信息与偏好设置
+                  Manage your account and preferences
                 </Text>
               </div>
               <ArrowRightOutlined style={{ color: '#6B7280', fontSize: 16 }} />

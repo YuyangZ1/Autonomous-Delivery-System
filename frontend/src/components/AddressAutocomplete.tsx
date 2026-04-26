@@ -29,7 +29,10 @@ export function AddressAutocomplete({
   style,
 }: Props) {
   const placesLib = useMapsLibrary('places');
-  const inputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  // PlaceAutocompleteElement is a custom element — typed as any to avoid
+  // tight coupling with the @types/google.maps version installed.
+  const elementRef = useRef<any>(null);
   const hasSelectedRef = useRef(false);
 
   // Keep callbacks in refs so effects don't re-run when parent re-renders
@@ -38,53 +41,79 @@ export function AddressAutocomplete({
   const onClearRef = useRef(onClear);
   onClearRef.current = onClear;
 
-  // Native input listener: detects edits after a place was selected
   useEffect(() => {
-    const el = inputRef.current;
-    if (!el) return;
+    if (!placesLib || !containerRef.current) return;
 
+    const PlaceAutocompleteElement = (placesLib as any).PlaceAutocompleteElement;
+    if (!PlaceAutocompleteElement) {
+      console.error(
+        'PlaceAutocompleteElement is not available. Make sure "Places API (New)" is enabled in Google Cloud Console.',
+      );
+      return;
+    }
+
+    const element = new PlaceAutocompleteElement({
+      includedRegionCodes: ['us'],
+      locationRestriction: SF_BOUNDS,
+    });
+
+    if (placeholder) {
+      element.setAttribute('placeholder', placeholder);
+    }
+    element.classList.add('ddma-place-autocomplete');
+
+    elementRef.current = element;
+    containerRef.current.appendChild(element);
+
+    // Fired when the user picks a suggestion from the dropdown
+    const handleSelect = async (event: any) => {
+      const placePrediction = event.placePrediction;
+      if (!placePrediction) return;
+      try {
+        const place = placePrediction.toPlace();
+        await place.fetchFields({ fields: ['formattedAddress', 'location'] });
+        if (place.formattedAddress && place.location) {
+          hasSelectedRef.current = true;
+          onSelectRef.current(
+            place.formattedAddress,
+            place.location.lat(),
+            place.location.lng(),
+          );
+        }
+      } catch (e) {
+        console.error('Failed to fetch place details', e);
+      }
+    };
+
+    // Bubbles up from the inner input — fires when user types/edits
     const handleInput = () => {
       if (hasSelectedRef.current) {
         // User edited after selecting — invalidate the selection
         hasSelectedRef.current = false;
         onClearRef.current();
-      } else if (el.value === '') {
-        onClearRef.current();
       }
     };
 
-    el.addEventListener('input', handleInput);
-    return () => el.removeEventListener('input', handleInput);
-  }, []);
-
-  useEffect(() => {
-    if (!placesLib || !inputRef.current) return;
-
-    const autocomplete = new placesLib.Autocomplete(inputRef.current, {
-      componentRestrictions: { country: 'us' },
-      bounds: SF_BOUNDS,
-      strictBounds: true,
-      fields: ['formatted_address', 'geometry'],
-    });
-
-    const listener = autocomplete.addListener('place_changed', () => {
-      const place = autocomplete.getPlace();
-      if (place.geometry?.location && place.formatted_address) {
-        hasSelectedRef.current = true;
-        onSelectRef.current(
-          place.formatted_address,
-          place.geometry.location.lat(),
-          place.geometry.location.lng(),
-        );
-        // Blur dismisses the dropdown and gives a clear "confirmed" signal
-        inputRef.current?.blur();
-      }
-    });
+    element.addEventListener('gmp-select', handleSelect);
+    element.addEventListener('input', handleInput);
 
     return () => {
-      google.maps.event.removeListener(listener);
+      element.removeEventListener('gmp-select', handleSelect);
+      element.removeEventListener('input', handleInput);
+      element.remove();
+      elementRef.current = null;
     };
-  }, [placesLib]);
+  }, [placesLib, placeholder]);
+
+  // Toggle disabled attribute when prop changes
+  useEffect(() => {
+    if (!elementRef.current) return;
+    if (disabled) {
+      elementRef.current.setAttribute('disabled', '');
+    } else {
+      elementRef.current.removeAttribute('disabled');
+    }
+  }, [disabled]);
 
   const isError = status === 'error';
 
@@ -109,20 +138,9 @@ export function AddressAutocomplete({
           {prefix}
         </span>
       )}
-      <input
-        ref={inputRef}
-        placeholder={placeholder}
-        disabled={disabled}
-        style={{
-          flex: 1,
-          border: 'none',
-          outline: 'none',
-          fontSize: 16,
-          background: 'transparent',
-          color: disabled ? 'rgba(0,0,0,0.25)' : 'rgba(0,0,0,0.88)',
-          fontFamily: 'inherit',
-          minWidth: 0,
-        }}
+      <div
+        ref={containerRef}
+        style={{ flex: 1, display: 'flex', alignItems: 'center', minWidth: 0 }}
       />
     </div>
   );

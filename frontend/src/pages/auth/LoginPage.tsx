@@ -58,10 +58,10 @@ export function LoginPage() {
             level={3}
             style={{ margin: 0, color: "#1A1D2E", letterSpacing: -0.5 }}
           >
-            欢迎回来
+            Welcome Back
           </Typography.Title>
           <Typography.Text type="secondary" style={{ fontSize: 14 }}>
-            登录继续使用自治配送服务
+            Log in to continue using Autonomous Delivery
           </Typography.Text>
         </div>
 
@@ -71,44 +71,44 @@ export function LoginPage() {
             try {
               const response = await loginApi(values);
               login({ token: response.access_token, user: response.user });
-              message.success("登录成功");
+              message.success("Logged in successfully");
               navigate(from, { replace: true });
             } catch (error) {
               const err = error as Error;
-              message.error(err.message || "登录失败，请重试");
+              message.error(err.message || "Login failed. Please try again.");
             }
           }}
         >
           <Form.Item
-            label="邮箱或手机"
+            label="Email or Phone"
             name="identifier"
-            rules={[{ required: true, message: "请输入邮箱或手机" }]}
+            rules={[{ required: true, message: "Please enter email or phone" }]}
           >
             <Input
               size="large"
-              placeholder="user@example.com 或 +14155550101"
+              placeholder="user@example.com or +14155550101"
             />
           </Form.Item>
           <Form.Item
-            label="密码"
+            label="Password"
             name="password"
-            rules={[{ required: true, message: "请输入密码" }]}
+            rules={[{ required: true, message: "Please enter a password" }]}
             style={{ marginBottom: 8 }}
           >
-            <Input.Password size="large" placeholder="请输入密码" />
+            <Input.Password size="large" placeholder="Enter your password" />
           </Form.Item>
           <Form.Item style={{ marginTop: 16 }}>
             <Button type="primary" htmlType="submit" block size="large">
-              登录
+              Log In
             </Button>
           </Form.Item>
         </Form>
 
         <div style={{ textAlign: "center", marginTop: 4 }}>
           <Typography.Text type="secondary" style={{ fontSize: 13 }}>
-            没有账户？{" "}
+            Don't have an account?{" "}
             <Link to="/register" style={{ color: "#4F6EF7", fontWeight: 500 }}>
-              立即注册
+              Sign Up
             </Link>
           </Typography.Text>
         </div>

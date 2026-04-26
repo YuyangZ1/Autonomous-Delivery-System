@@ -43,9 +43,9 @@ export function OrderDetailPage() {
     );
   }
 
-  const vehicleLabel = summary?.vehicle_type_chosen === "DRONE" ? "🚁 无人机" : "🤖 地面机器人";
+  const vehicleLabel = summary?.vehicle_type_chosen === "DRONE" ? "🚁 Drone" : "🤖 Ground Robot";
   const dateStr = summary
-    ? new Date(summary.created_at).toLocaleString("zh-CN", {
+    ? new Date(summary.created_at).toLocaleString("en-US", {
         year: "numeric",
         month: "2-digit",
         day: "2-digit",
@@ -64,17 +64,17 @@ export function OrderDetailPage() {
           onClick={() => navigate("/history")}
           style={{ color: "#6B7280", padding: 0, marginBottom: 12 }}
         >
-          返回历史
+          Back to History
         </Button>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <Title level={2} style={{ margin: 0, color: "#1A1D2E", letterSpacing: -0.5 }}>
-            订单详情
+            Order Details
           </Title>
           <Badge
             status="success"
             text={
               <Text style={{ fontSize: 13, color: "#10B981", fontWeight: 600 }}>
-                已交付
+                Delivered
               </Text>
             }
           />
@@ -99,26 +99,26 @@ export function OrderDetailPage() {
             marginBottom: 20,
           }}
         >
-          配送信息
+          Delivery Information
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-          <Row label="收货地址" value={summary?.dropoff_summary ?? "—"} />
-          <Row label="配送方式" value={summary?.vehicle_type_chosen ? vehicleLabel : "—"} />
+          <Row label="Dropoff Address" value={summary?.dropoff_summary ?? "—"} />
+          <Row label="Delivery Method" value={summary?.vehicle_type_chosen ? vehicleLabel : "—"} />
           <Row
-            label="订单金额"
+            label="Order Amount"
             value={
               summary
                 ? `${summary.currency === "USD" ? "$" : ""}${Number(summary.total_amount).toFixed(2)}`
                 : "—"
             }
           />
-          <Row label="下单时间" value={dateStr} />
+          <Row label="Order Date" value={dateStr} />
           <Row
-            label="订单状态"
+            label="Status"
             value={
               <span style={{ color: "#10B981", fontWeight: 600, display: "flex", alignItems: "center", gap: 4 }}>
-                <CheckCircleOutlined /> 已交付
+                <CheckCircleOutlined /> Delivered
               </span>
             }
           />
@@ -140,12 +140,12 @@ export function OrderDetailPage() {
             marginBottom: 20,
           }}
         >
-          取件凭证
+          Pickup Credentials
         </div>
         <div style={{ display: "flex", gap: 32, alignItems: "flex-start", flexWrap: "wrap" }}>
           <div>
             <Text type="secondary" style={{ fontSize: 13, display: "block", marginBottom: 8 }}>
-              取件 PIN 码
+              Pickup PIN
             </Text>
             <div
               style={{
@@ -165,7 +165,7 @@ export function OrderDetailPage() {
           </div>
           <div>
             <Text type="secondary" style={{ fontSize: 13, display: "block", marginBottom: 8 }}>
-              扫码取件
+              Scan to Pickup
             </Text>
             <div
               style={{

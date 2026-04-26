@@ -16,25 +16,25 @@ type VehicleKey = "robot" | "drone";
 const VEHICLES = [
   {
     key: "robot" as VehicleKey,
-    name: "地面机器人",
-    desc: "全天候自动驾驶，适合日常包裹",
-    eta: "~45 分钟",
+    name: "Ground Robot",
+    desc: "All-weather autonomous driving, perfect for everyday packages",
+    eta: "~45 minutes",
     price: "$12.00",
     gradient: "linear-gradient(135deg, #3B5BDB 0%, #7C3AED 100%)",
     iconColor: "#fff",
-    badge: "⭐ 最佳性价比",
+    badge: "⭐ Best Value",
     badgeBg: "#F59E0B",
     icon: <RobotOutlined style={{ fontSize: 52, color: "#fff" }} />,
   },
   {
     key: "drone" as VehicleKey,
-    name: "无人机",
-    desc: "空中直线飞行，速度快但限载重",
-    eta: "~28 分钟",
+    name: "Drone",
+    desc: "Aerial straight-line flight, fast but weight-limited",
+    eta: "~28 minutes",
     price: "$18.00",
     gradient: "linear-gradient(135deg, #059669 0%, #0EA5E9 100%)",
     iconColor: "#fff",
-    badge: "⚡ 最快送达",
+    badge: "⚡ Fastest Delivery",
     badgeBg: "#10B981",
     icon: <SendOutlined style={{ fontSize: 48, color: "#fff", transform: "rotate(-45deg)" }} />,
   },
@@ -110,9 +110,9 @@ export function RecommendationsPage() {
       {/* Header */}
       <div style={{ marginBottom: 32 }}>
         <Title level={2} style={{ margin: "0 0 4px", color: "#1A1D2E", letterSpacing: -0.5 }}>
-          选择配送方式
+          Select Delivery Method
         </Title>
-        <Text type="secondary">根据您的包裹和地址，为您推荐以下方案</Text>
+        <Text type="secondary">Recommended options based on your package and location</Text>
       </div>
 
       {/* Vehicle cards */}
@@ -159,7 +159,7 @@ export function RecommendationsPage() {
                       zIndex: 2,
                     }}
                   >
-                    {isDisabled ? "⚠ 暂不可用" : v.badge}
+                    {isDisabled ? "⚠ Unavailable" : v.badge}
                   </div>
 
                   {/* Selected checkmark */}
@@ -206,7 +206,7 @@ export function RecommendationsPage() {
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
                       <div>
                         <div style={{ fontSize: 11, fontWeight: 600, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: 0.6, marginBottom: 2 }}>
-                          预计时间
+                          Estimated Time
                         </div>
                         <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
                           <ClockCircleOutlined style={{ color: "#6B7280", fontSize: 13 }} />
@@ -215,7 +215,7 @@ export function RecommendationsPage() {
                       </div>
                       <div style={{ textAlign: "right" }}>
                         <div style={{ fontSize: 11, fontWeight: 600, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: 0.6, marginBottom: 2 }}>
-                          配送费
+                          Delivery Fee
                         </div>
                         <div
                           style={{
@@ -254,7 +254,7 @@ export function RecommendationsPage() {
           boxShadow: "0 4px 16px rgba(79,110,247,0.3)",
         }}
       >
-        {noVehiclesAvailable ? "当前站点暂无可用车辆" : "确认选择并继续结账 →"}
+        {noVehiclesAvailable ? "No vehicles available at this location" : "Confirm Selection & Continue Checkout →"}
       </Button>
     </div>
   );

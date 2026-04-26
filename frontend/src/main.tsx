@@ -10,7 +10,7 @@ import { AppRouter } from "@/app/router";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
-      <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string}>
+      <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string} language="en" region="US">
         <Providers>
           <AuthProvider>
             <AppRouter />

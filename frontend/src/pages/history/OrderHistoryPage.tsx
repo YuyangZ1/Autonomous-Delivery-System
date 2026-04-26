@@ -15,10 +15,10 @@ type OrderStatus = "PENDING" | "IN_TRANSIT" | "DELIVERED" | "CANCELLED";
 type BadgeStatus = "processing" | "success" | "warning" | "error" | "default";
 
 const STATUS_CONFIG = {
-  IN_TRANSIT: { badgeStatus: "processing" as const, label: "派送中",  color: "#4F6EF7" },
-  DELIVERED:  { badgeStatus: "success"    as const, label: "已交付",  color: "#52C41A" },
-  PENDING:    { badgeStatus: "warning"    as const, label: "处理中",  color: "#FA8C16" },
-  CANCELLED:  { badgeStatus: "error"      as const, label: "已取消",  color: "#FF4D4F" },
+  IN_TRANSIT: { badgeStatus: "processing" as const, label: "In Transit",  color: "#4F6EF7" },
+  DELIVERED:  { badgeStatus: "success"    as const, label: "Delivered",  color: "#52C41A" },
+  PENDING:    { badgeStatus: "warning"    as const, label: "Processing",  color: "#FA8C16" },
+  CANCELLED:  { badgeStatus: "error"      as const, label: "Cancelled",  color: "#FF4D4F" },
 } satisfies Record<OrderStatus, { badgeStatus: BadgeStatus; label: string; color: string }>;
 
 export function OrderHistoryPage() {
@@ -30,7 +30,7 @@ export function OrderHistoryPage() {
   useEffect(() => {
     getMyOrders()
         .then((data) => setOrders(data))
-        .catch((err) => setError(err.message ?? "加载失败"))
+        .catch((err) => setError(err.message ?? "Failed to load"))
         .finally(() => setLoading(false));
   }, []);
 
@@ -50,9 +50,9 @@ export function OrderHistoryPage() {
                 level={2}
                 style={{ margin: "0 0 4px", color: "#1A1D2E", letterSpacing: -0.5 }}
             >
-              订单历史
+              Order History
             </Title>
-            <Text type="secondary">查看所有历史配送记录</Text>
+            <Text type="secondary">View all delivery history</Text>
           </div>
           <Button
               type="primary"
@@ -60,7 +60,7 @@ export function OrderHistoryPage() {
               onClick={() => navigate("/order")}
               style={{ borderRadius: 10 }}
           >
-            新建订单
+            Create Order
           </Button>
         </div>
 
@@ -85,12 +85,12 @@ export function OrderHistoryPage() {
                   <HistoryOutlined style={{ fontSize: 64, color: "#C4CCDD" }} />
                 }
                 description={
-                  <span style={{ color: "#9CA3AF" }}>暂无订单记录</span>
+                  <span style={{ color: "#9CA3AF" }}>No orders yet</span>
                 }
                 style={{ padding: "60px 0" }}
             >
               <Button type="primary" onClick={() => navigate("/order")}>
-                创建第一单
+                Create First Order
               </Button>
             </Empty>
         )}
@@ -105,7 +105,7 @@ export function OrderHistoryPage() {
                   color: "#999",
                 };
                 const dateStr = new Date(order.created_at).toLocaleDateString(
-                    "zh-CN",
+                    "en-US",
                     { year: "numeric", month: "2-digit", day: "2-digit" }
                 );
                 const isDelivered = order.status === "DELIVERED";
@@ -225,7 +225,7 @@ export function OrderHistoryPage() {
                                   padding: "0 8px",
                                 }}
                             >
-                              查看详情
+                              View Details
                             </Button>
                         )}
 
@@ -244,7 +244,7 @@ export function OrderHistoryPage() {
                                   padding: "0 8px",
                                 }}
                             >
-                              追踪
+                              Track
                             </Button>
                         )}
                       </div>
