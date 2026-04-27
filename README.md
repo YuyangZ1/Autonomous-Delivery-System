@@ -18,6 +18,8 @@ A full-stack autonomous delivery platform with real-time fleet tracking. Custome
 
 ## Product Walkthrough
 
+<video src="file:///Users/cheriezhou/Desktop/Demo-DDMA%20Autonomous%20Delivery%20System.mp4" controls width="100%"></video>
+
 ### 1. Home
 
 Landing page — value proposition and quick navigation to the order flow.
