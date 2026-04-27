@@ -18,7 +18,10 @@ A full-stack autonomous delivery platform with real-time fleet tracking. Custome
 
 ## Product Walkthrough
 
+▶ [Click to watch the full demo video](https://youtu.be/wI8Dqh8cqq0)
+
 [![Demo Video](docs/screenshots/home.png)](https://youtu.be/wI8Dqh8cqq0)
+
 
 ### 1. Home
 
