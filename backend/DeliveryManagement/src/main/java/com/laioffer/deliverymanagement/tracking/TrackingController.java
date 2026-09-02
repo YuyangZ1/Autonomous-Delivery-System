@@ -6,6 +6,7 @@ import com.laioffer.deliverymanagement.dto.DeliveryCenterDto;
 import com.laioffer.deliverymanagement.entity.OrderEntity;
 import com.laioffer.deliverymanagement.repository.OrderRepository;
 import com.laioffer.deliverymanagement.service.DeliveryCenterService;
+import com.laioffer.deliverymanagement.service.FleetVehicleService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,10 +25,16 @@ public class TrackingController {
 
     private final OrderRepository orderRepository;
     private final DeliveryCenterService deliveryCenterService;
+    private final FleetVehicleService fleetVehicleService;
 
-    public TrackingController(OrderRepository orderRepository, DeliveryCenterService deliveryCenterService) {
+    public TrackingController(
+            OrderRepository orderRepository,
+            DeliveryCenterService deliveryCenterService,
+            FleetVehicleService fleetVehicleService
+    ) {
         this.orderRepository = orderRepository;
         this.deliveryCenterService = deliveryCenterService;
+        this.fleetVehicleService = fleetVehicleService;
     }
 
     @GetMapping("/{orderId}/tracking")
@@ -133,6 +140,10 @@ public class TrackingController {
                 order.version(), order.metadata()
         );
         orderRepository.save(updated);
+
+        if ("DELIVERED".equals(newStatus) && order.fleetVehicleId() != null) {
+            fleetVehicleService.markAvailable(order.fleetVehicleId());
+        }
 
         return new TrackingResponse(
                 order.id(),

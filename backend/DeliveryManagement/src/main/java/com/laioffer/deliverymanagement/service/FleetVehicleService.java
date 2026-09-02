@@ -31,15 +31,29 @@ public class FleetVehicleService {
         return repository.findById(id).map(FleetVehicleService::toDto);
     }
 
+    public Optional<FleetVehicleDto> findAvailableByCenterAndType(UUID centerId, String vehicleType) {
+        return repository.findFirstByCenterIdAndVehicleTypeAndAvailableTrue(centerId, vehicleType)
+                .map(FleetVehicleService::toDto);
+    }
+
     @Transactional
     public void markUnavailable(UUID vehicleId) {
+        setAvailable(vehicleId, false);
+    }
+
+    @Transactional
+    public void markAvailable(UUID vehicleId) {
+        setAvailable(vehicleId, true);
+    }
+
+    private void setAvailable(UUID vehicleId, boolean available) {
         FleetVehicleEntity vehicle = repository.findById(vehicleId)
                 .orElseThrow(() -> new RuntimeException("Vehicle not found: " + vehicleId));
         repository.save(new FleetVehicleEntity(
                 vehicle.id(),
                 vehicle.centerId(),
                 vehicle.vehicleType(),
-                false,
+                available,
                 vehicle.externalDeviceId(),
                 vehicle.telemetryHint(),
                 vehicle.metadata()

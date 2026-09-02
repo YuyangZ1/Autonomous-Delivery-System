@@ -148,12 +148,10 @@ public class OrderController {
             throw new ApiException(409, "ORDER_INVALID_STATE", "Order cannot be paid in its current state.");
         }
 
-        List<FleetVehicleDto> vehicles = fleetVehicleService.findByCenterId(order.centerId());
         DeliveryCenterDto center = deliveryCenterService.findById(order.centerId())
                 .orElseThrow(() -> new ApiException(404, "CENTER_NOT_FOUND", "Delivery center not found."));
-        FleetVehicleDto vehicle = vehicles.stream()
-                .filter(v -> v.available() && request.vehicleType().equals(v.vehicleType()))
-                .findFirst()
+        FleetVehicleDto vehicle = fleetVehicleService
+                .findAvailableByCenterAndType(order.centerId(), request.vehicleType())
                 .orElseThrow(() -> new ApiException(409, "NO_VEHICLE_AVAILABLE",
                         "No available " + request.vehicleType() + " vehicle at the assigned center."));
 
