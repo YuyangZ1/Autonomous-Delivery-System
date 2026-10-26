@@ -95,6 +95,16 @@ codebase ever marked a vehicle available again after its order was delivered —
 fleet drains monotonically. Invisible with the 9-vehicle demo seed (nobody manually
 runs enough orders to notice); surfaces immediately under sustained order volume.
 
+**Note on how this was actually verified:** `loadtest.js`'s concurrent run below
+never exercises the fix for this bug. Vehicles in this simulation move a fixed
+~111m per `/tracking` call, not by elapsed time (see `TrackingController`'s
+`step = 0.001 / dist`) — and `loadtest.js` picks pickup/dropoff randomly across
+all of SF (usually several km apart) and only polls tracking 3 times, nowhere
+near enough to reach `DELIVERED`. So in the runs below, essentially no order
+ever completes, and the release code path never actually runs during this load
+test. The release fix itself is instead verified by a separate, dedicated
+concurrency test — see `release-cycle-test.md`.
+
 ### Run 2 — inflated fleet (17,003 vehicles at one center), to isolate raw capacity
 
 Re-seeded with a much larger fleet specifically to remove "vehicle pool exhaustion"
@@ -158,16 +168,30 @@ Existing unit tests: 6 total, 5 passed. The 1 failure (`contextLoads()`) needs a
 Postgres on the default port (5432) with the hardcoded dev credentials — a
 pre-existing environment dependency of that test, unrelated to this change.
 
-### A third finding (not "fixed" — a real constraint, not a bug)
+### A third finding — corrected
+
+*An earlier version of this section attributed the failure-rate change below to
+"simulated vehicle speeds can't keep up with demand." That's wrong — vehicles in
+this simulation don't move by speed/time at all (see the note on Bug #1 above),
+so there's no speed to keep up or fall behind. Corrected explanation follows.*
 
 Re-running the fixed backend at realistic fleet scale showed a *slightly higher*
-failure rate than the original baseline (10.34% vs 8.37%). Not a regression: the
-system got faster, so more payment attempts landed in the same 2.5-minute window
-(8394 vs 7346 iterations) against the same fixed 3000-vehicle pool, exhausting it
-sooner. Once the software-side inefficiency was fixed, the real limiting factor
-became fleet turnover: simulated vehicle speeds (15–40 km/h) can't physically keep up
-with ~60 orders/sec of demand. That's a legitimate fleet-sizing/business constraint,
-not something a query fix or index addresses — left as-is.
+failure rate than the original baseline (10.34% vs 8.37%). Not a regression, and
+not a fleet-turnover/capacity issue either — the real mechanism is simpler:
+
+- The 3000-vehicle pool is effectively one-way during this test: as established
+  above, orders essentially never reach `DELIVERED` within this run (random
+  multi-km pickup/dropoff pairs, only 3 tracking polls), so almost nothing gets
+  released back into the pool while the test is running.
+- The query fix made the system faster, so more payment attempts landed in the
+  same 2.5-minute window (8394 vs 7346 iterations) against that same,
+  barely-replenishing 3000-vehicle pool — exhausting it sooner, hence more 409s.
+
+In short: this is an artifact of the load test's own design (pickup/dropoff too
+far apart, too few tracking polls to ever complete a delivery), not evidence
+about real-world fleet sizing. The dedicated concurrency test in
+`release-cycle-test.md` (pickup == dropoff, so delivery completes every time)
+shows the release-and-reuse cycle itself works correctly and repeatably.
 
 ## Caveats
 
