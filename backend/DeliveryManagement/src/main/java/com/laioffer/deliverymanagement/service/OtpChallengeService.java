@@ -4,6 +4,7 @@ import com.laioffer.deliverymanagement.dto.OtpChallengeDto;
 import com.laioffer.deliverymanagement.entity.OtpChallengeEntity;
 import com.laioffer.deliverymanagement.repository.OtpChallengeRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
@@ -48,7 +49,15 @@ public class OtpChallengeService {
         return toDto(saved);
     }
 
-    @Transactional
+    // REQUIRES_NEW: the caller (AuthService.completeRegistration, itself
+    // @Transactional) always throws right after calling this on a failed
+    // attempt. With the default propagation this increment would join that
+    // same transaction and get rolled back along with everything else when
+    // the exception propagates -- silently discarding the very attempt count
+    // the lockout check in completeRegistration() depends on. Running it in
+    // its own transaction makes it commit immediately, independent of whether
+    // the caller's transaction later rolls back.
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Optional<OtpChallengeDto> incrementAttemptCount(UUID id) {
         repository.incrementAttemptCount(id);
         return repository.findById(id).map(OtpChallengeService::toDto);

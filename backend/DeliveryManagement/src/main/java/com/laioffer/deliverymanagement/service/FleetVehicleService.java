@@ -31,14 +31,37 @@ public class FleetVehicleService {
         return repository.findById(id).map(FleetVehicleService::toDto);
     }
 
-    public Optional<FleetVehicleDto> findAvailableByCenterAndType(UUID centerId, String vehicleType) {
-        return repository.findFirstByCenterIdAndVehicleTypeAndAvailableTrue(centerId, vehicleType)
-                .map(FleetVehicleService::toDto);
-    }
+    private static final int MAX_CLAIM_ATTEMPTS = 50;
 
+    // Atomically finds and reserves one available vehicle of the given type at the
+    // given center. A plain "find one, then mark it unavailable" (two separate
+    // calls) lets two concurrent payments both read the same vehicle as available
+    // before either write lands, double-booking it. Each attempt here does a
+    // conditional UPDATE (available = true -> false) that only one concurrent
+    // caller can win; a losing attempt means someone else just took that specific
+    // vehicle, so we retry against the next candidate -- the vehicle that lost
+    // the race is no longer "available" to findFirst on the next loop iteration,
+    // so this is guaranteed to terminate within the fleet's size for that
+    // center/type, not loop forever.
     @Transactional
-    public void markUnavailable(UUID vehicleId) {
-        setAvailable(vehicleId, false);
+    public Optional<FleetVehicleDto> claimAvailableVehicle(UUID centerId, String vehicleType) {
+        for (int attempt = 0; attempt < MAX_CLAIM_ATTEMPTS; attempt++) {
+            Optional<FleetVehicleEntity> candidate =
+                    repository.findFirstByCenterIdAndVehicleTypeAndAvailableTrue(centerId, vehicleType);
+            if (candidate.isEmpty()) {
+                return Optional.empty();
+            }
+            FleetVehicleEntity vehicle = candidate.get();
+            if (repository.claimIfAvailable(vehicle.id()) == 1) {
+                return Optional.of(toDto(new FleetVehicleEntity(
+                        vehicle.id(), vehicle.centerId(), vehicle.vehicleType(), false,
+                        vehicle.externalDeviceId(), vehicle.telemetryHint(), vehicle.metadata()
+                )));
+            }
+            // Someone else claimed this exact vehicle between the read and the
+            // conditional update above -- try the next available candidate.
+        }
+        return Optional.empty();
     }
 
     @Transactional

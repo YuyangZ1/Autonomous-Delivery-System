@@ -32,6 +32,7 @@ public class AuthService {
     }
 
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+    private static final int MAX_OTP_ATTEMPTS = 5;
 
     @Transactional
     public InitiateRegistrationResponse initiateRegistration(RegisterRequest request) {
@@ -88,6 +89,10 @@ public class AuthService {
         if (challenge.expiresAt().isBefore(java.time.OffsetDateTime.now())) {
             throw new ApiException(401, "OTP_EXPIRED", "OTP challenge has expired.");
         }
+        if (challenge.attemptCount() >= MAX_OTP_ATTEMPTS) {
+            throw new ApiException(401, "OTP_LOCKED",
+                    "Too many incorrect attempts. Please request a new code.");
+        }
         if (!passwordHashService.matches(request.otpCode(), challenge.codeHash())) {
             otpChallengeService.incrementAttemptCount(challenge.id());
             throw new ApiException(401, "OTP_INVALID", "OTP code is invalid.");
@@ -113,6 +118,15 @@ public class AuthService {
 
         if (user.passwordHash() == null || !passwordHashService.matches(request.password(), user.passwordHash())) {
             throw new ApiException(401, "AUTH_INVALID_CREDENTIALS", "Invalid credentials.");
+        }
+
+        // `guest` doubles as "registration pending OTP verification" for accounts
+        // created via initiateRegistration() -- a real guest (no email/password)
+        // never reaches this point since the password check above already
+        // rejects it. activateUser() flips this to false once OTP is verified.
+        if (user.guest()) {
+            throw new ApiException(403, "ACCOUNT_NOT_VERIFIED",
+                    "Please complete OTP verification before logging in.");
         }
 
         String token = jwtService.issueToken(user);

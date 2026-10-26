@@ -150,8 +150,10 @@ public class OrderController {
 
         DeliveryCenterDto center = deliveryCenterService.findById(order.centerId())
                 .orElseThrow(() -> new ApiException(404, "CENTER_NOT_FOUND", "Delivery center not found."));
+        // Atomic find-and-reserve: avoids two concurrent payments both grabbing
+        // the same vehicle (see FleetVehicleService.claimAvailableVehicle).
         FleetVehicleDto vehicle = fleetVehicleService
-                .findAvailableByCenterAndType(order.centerId(), request.vehicleType())
+                .claimAvailableVehicle(order.centerId(), request.vehicleType())
                 .orElseThrow(() -> new ApiException(409, "NO_VEHICLE_AVAILABLE",
                         "No available " + request.vehicleType() + " vehicle at the assigned center."));
 
@@ -162,7 +164,6 @@ public class OrderController {
                 handoffPin, request.etaMinutes(), request.priceUsd(),
                 center.latitude(), center.longitude()
         );
-        fleetVehicleService.markUnavailable(vehicle.id());
         paymentService.createPayment(orderId, request.priceUsd());
 
         return new PayOrderResponse(
